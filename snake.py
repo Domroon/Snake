@@ -1,7 +1,7 @@
 import pygame
 
 
-class Square:
+class SnakeHead:
     def __init__(self, x, y, square_lengths, color):
         self.x = x
         self.y = y
@@ -52,13 +52,14 @@ def main():
 
     clock = pygame.time.Clock()
 
-    square = Square(0, 0, square_lengths, (255, 0, 0))
+    square = SnakeHead(0, 0, square_lengths, (255, 0, 0))
 
     direction = 'right'
 
     run = True
+    game_speed = 4
     while run:
-        clock.tick(3)
+        clock.tick(game_speed)
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
