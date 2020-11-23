@@ -73,25 +73,18 @@ def check_screen_border(square, screen_width, screen_height, square_lengths):
         square.x = left_screen_x
 
 
-def eat_check(head, food_list, square_lengths, screen_width, screen_height, food_counter):
+def eat_check(head, food_list, square_lengths, screen_width, screen_height, body_counter):
     # the first body-square attached head
-    if not head.body_squares:
-        body_square_1 = Body(head.last_position['x'], head.last_position['y'], square_lengths)
-        head.body_squares.append(body_square_1)
-        # first body square attached head
-        head.body_squares[0].x = head.last_position['x']
-        head.body_squares[0].y = head.last_position['y']
-
-    body_square = Body(head.body_squares[food_counter].last_position['x'], head.body_squares[food_counter].last_position['y'], square_lengths)
-    head.body_squares.append(body_square)
-
     for food in food_list:
         if food.x == head.x and food.y == head.y:
             food_list.pop()
             print('The snake has eat the food')
             random_food_position(food_list, square_lengths, screen_width, screen_height)
 
-    food_counter += 1
+            if body_counter == 0:
+                head.body_squares.append(Body(head.last_position['x'], head.last_position['y'], square_lengths))
+
+            body_counter += 1
 
 
 def random_food_position(food_list, square_lengths, screen_width, screen_height):
@@ -107,7 +100,7 @@ def main():
     screen_width = 1280
     screen_height = 720
 
-    square_lengths = 20
+    square_lengths = 80
 
     window = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Snake")
@@ -115,17 +108,16 @@ def main():
     clock = pygame.time.Clock()
 
     head = Head(0, 0, square_lengths)
-    head.save_position()
     direction = 'right'
 
     food_list = []
 
     random_food_position(food_list, square_lengths, screen_width, screen_height)
 
-    food_counter = 0
+    body_counter = 0
 
     run = True
-    game_speed = 8
+    game_speed = 10
     while run:
         clock.tick(game_speed)
 
@@ -157,7 +149,12 @@ def main():
             head.make_step(-1, 0)
 
         check_screen_border(head, screen_width, screen_height, square_lengths)
-        eat_check(head, food_list, square_lengths, screen_width, screen_height, food_counter)
+        eat_check(head, food_list, square_lengths, screen_width, screen_height, body_counter)
+
+        # set the last position from the head square to the first body-square
+        if head.body_squares:   # only if the list is not empty
+            head.body_squares[0].x = head.last_position['x']
+            head.body_squares[0].y = head.last_position['y']
 
         # set the last position from the square in front of it
         if head.body_squares:
@@ -170,6 +167,14 @@ def main():
             head.save_position()
             for i in range(0, len(head.body_squares)):
                 head.body_squares[i].save_position()
+
+        head.save_position()
+
+        # check head collision with body
+        for i in range(0, len(head.body_squares)):
+            if head.x == head.body_squares[i].x and head.y == head.body_squares[i].y:
+                print('GAME OVER')
+                run = False
 
         redraw(head, head.body_squares, food_list, window)
 
