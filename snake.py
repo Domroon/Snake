@@ -57,8 +57,8 @@ def eat_check(snakeHead, food_list, square_lengths, screen_width, screen_height)
 
 
 def random_food_position(food_list, square_lengths, screen_width, screen_height):
-    food_x = random.randint(0, round((screen_width - square_lengths) / 20)) * 20
-    food_y = random.randint(0, round((screen_height - square_lengths) / 20)) * 20
+    food_x = random.randint(0, round((screen_width - square_lengths) / square_lengths)) * square_lengths
+    food_y = random.randint(0, round((screen_height - square_lengths) / square_lengths)) * square_lengths
     food = Food(food_x, food_y, square_lengths)
     food_list.append(food)
 
