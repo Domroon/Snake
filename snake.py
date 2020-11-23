@@ -48,11 +48,19 @@ def check_screen_border(square, screen_width, screen_height, square_lengths):
         square.x = left_screen_x
 
 
-def eat_check(snakeHead, food_list):
+def eat_check(snakeHead, food_list, square_lengths, screen_width, screen_height):
     for food in food_list:
         if food.x == snakeHead.x and food.y == snakeHead.y:
             food_list.pop()
             print('The snake has eat the food')
+            random_food_position(food_list, square_lengths, screen_width, screen_height)
+
+
+def random_food_position(food_list, square_lengths, screen_width, screen_height):
+    food_x = random.randint(0, round((screen_width - square_lengths) / 20)) * 20
+    food_y = random.randint(0, round((screen_height - square_lengths) / 20)) * 20
+    food = Food(food_x, food_y, square_lengths)
+    food_list.append(food)
 
 
 def main():
@@ -75,10 +83,7 @@ def main():
 
     food_list = []
     # for testing
-    food_x = random.randint(0, round((screen_width - square_lengths)/20)) * 20
-    food_y = random.randint(0, round((screen_height - square_lengths)/20)) * 20
-    food = Food(food_x, food_y, square_lengths)
-    food_list.append(food)
+    random_food_position(food_list, square_lengths, screen_width, screen_height)
 
     run = True
     game_speed = 6
@@ -113,7 +118,7 @@ def main():
             snakeHead.make_step(-1, 0)
 
         check_screen_border(snakeHead, screen_width, screen_height, square_lengths)
-        eat_check(snakeHead, food_list)
+        eat_check(snakeHead, food_list, square_lengths, screen_width, screen_height)
 
         redraw(snakeHead, snake_body_list, food_list, window)
 
