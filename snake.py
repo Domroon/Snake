@@ -8,15 +8,13 @@ class Square:
         self.width = width
         self.height = height
         self.color = color
-        self.x_step = 0
-        self.y_step = 0
 
     def draw(self, window):
         pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height))
 
-    def make_step(self):
-        self.x += self.x_step
-        self.y += self.y_step
+    def make_step(self, x_step, y_step):
+        self.x += x_step * self.width
+        self.y += y_step * self.height
 
 
 def redraw(square, window):
@@ -36,15 +34,40 @@ def main():
 
     clock = pygame.time.Clock()
 
-    square = Square(10, 10, 20, 20, (255, 0, 0))
+    square = Square(0, 0, 20, 20, (255, 0, 0))
+
+    direction = 'right'
 
     run = True
     while run:
-        clock.tick(27)
+        clock.tick(2)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            print('UP')
+            direction = 'up'
+        elif keys[pygame.K_RIGHT]:
+            print('RIGHT')
+            direction = 'right'
+        elif keys[pygame.K_DOWN]:
+            print('DOWN')
+            direction = 'down'
+        elif keys[pygame.K_LEFT]:
+            print('LEFT')
+            direction = 'left'
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+
+        if direction == 'up':
+            square.make_step(0, -1)
+        elif direction == 'right':
+            square.make_step(1, 0)
+        elif direction == 'down':
+            square.make_step(0, 1)
+        elif direction == 'left':
+            square.make_step(-1, 0)
 
         redraw(square, window)
 
