@@ -1,13 +1,13 @@
 import pygame
-
+import random
 
 class SnakeHead:
-    def __init__(self, x, y, square_lengths, color):
+    def __init__(self, x, y, square_lengths):
         self.x = x
         self.y = y
         self.width = square_lengths
         self.height = square_lengths
-        self.color = color
+        self.color = (255, 0, 0)
 
     def draw(self, window):
         pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height))
@@ -17,9 +17,17 @@ class SnakeHead:
         self.y += y_step * self.height
 
 
-def redraw(square, window):
+class Food(SnakeHead):
+    def __init__(self, x, y, square_lengths):
+        super().__init__(x, y, square_lengths)
+        self.color = (255, 255, 0)
+
+
+def redraw(snake_head, snake_body_list, food_list, window):
     window.fill((0, 0, 0))
-    square.draw(window)
+    snake_head.draw(window)
+    for food in food_list:
+        food.draw(window)
     pygame.display.update()
 
 
@@ -52,9 +60,17 @@ def main():
 
     clock = pygame.time.Clock()
 
-    square = SnakeHead(0, 0, square_lengths, (255, 0, 0))
-
+    snakeHead = SnakeHead(0, 0, square_lengths)
     direction = 'right'
+
+    snake_body_list = []
+
+    food_list = []
+    # for testing
+    food_x = random.randint(0, round((screen_width - square_lengths)/20)) * 20
+    food_y = random.randint(0, round((screen_height - square_lengths)/20)) * 20
+    food = Food(food_x, food_y, square_lengths)
+    food_list.append(food)
 
     run = True
     game_speed = 4
@@ -80,17 +96,17 @@ def main():
                 run = False
 
         if direction == 'up':
-            square.make_step(0, -1)
+            snakeHead.make_step(0, -1)
         elif direction == 'right':
-            square.make_step(1, 0)
+            snakeHead.make_step(1, 0)
         elif direction == 'down':
-            square.make_step(0, 1)
+            snakeHead.make_step(0, 1)
         elif direction == 'left':
-            square.make_step(-1, 0)
+            snakeHead.make_step(-1, 0)
 
-        check_screen_border(square, screen_width, screen_height, square_lengths)
+        check_screen_border(snakeHead, screen_width, screen_height, square_lengths)
 
-        redraw(square, window)
+        redraw(snakeHead, snake_body_list, food_list, window)
 
 
 if __name__ == '__main__':
