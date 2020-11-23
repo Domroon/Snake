@@ -17,10 +17,21 @@ class Square:
 class Head(Square):
     def __init__(self, x, y, square_lengths):
         super().__init__(x, y, square_lengths)
+        self.last_position = {'x': 0, 'y': 0}
+        self.body_squares = []
 
     def make_step(self, x_step, y_step):
         self.x += x_step * self.width
         self.y += y_step * self.height
+
+    def save_position(self):
+        self.last_position['x'] = self.x
+        self.last_position['y'] = self.y
+
+
+class Body(Square):
+    def __init__(self, x, y, square_length):
+        super().__init__(x, y, square_length)
 
 
 class Food(Square):
@@ -91,7 +102,7 @@ def main():
     random_food_position(food_list, square_lengths, screen_width, screen_height)
 
     run = True
-    game_speed = 6
+    game_speed = 8
     while run:
         clock.tick(game_speed)
 
