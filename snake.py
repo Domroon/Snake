@@ -32,6 +32,11 @@ class Head(Square):
 class Body(Square):
     def __init__(self, x, y, square_length):
         super().__init__(x, y, square_length)
+        self.last_position = {'x': 0, 'y': 0}
+
+    def save_position(self):
+        self.last_position['x'] = self.x
+        self.last_position['y'] = self.y
 
 
 class Food(Square):
@@ -45,6 +50,10 @@ def redraw(snake_head, snake_body_list, food_list, window):
     snake_head.draw(window)
     for food in food_list:
         food.draw(window)
+    if snake_body_list:
+        for body in snake_body_list:
+            body.draw(window)
+
     pygame.display.update()
 
 
@@ -64,12 +73,25 @@ def check_screen_border(square, screen_width, screen_height, square_lengths):
         square.x = left_screen_x
 
 
-def eat_check(head, food_list, square_lengths, screen_width, screen_height):
+def eat_check(head, food_list, square_lengths, screen_width, screen_height, food_counter):
+    # the first body-square attached head
+    if not head.body_squares:
+        body_square_1 = Body(head.last_position['x'], head.last_position['y'], square_lengths)
+        head.body_squares.append(body_square_1)
+        # first body square attached head
+        head.body_squares[0].x = head.last_position['x']
+        head.body_squares[0].y = head.last_position['y']
+
+    body_square = Body(head.body_squares[food_counter].last_position['x'], head.body_squares[food_counter].last_position['y'], square_lengths)
+    head.body_squares.append(body_square)
+
     for food in food_list:
         if food.x == head.x and food.y == head.y:
             food_list.pop()
             print('The snake has eat the food')
             random_food_position(food_list, square_lengths, screen_width, screen_height)
+
+    food_counter += 1
 
 
 def random_food_position(food_list, square_lengths, screen_width, screen_height):
@@ -93,13 +115,14 @@ def main():
     clock = pygame.time.Clock()
 
     head = Head(0, 0, square_lengths)
+    head.save_position()
     direction = 'right'
 
-    snake_body_list = []
-
     food_list = []
-    # for testing
+
     random_food_position(food_list, square_lengths, screen_width, screen_height)
+
+    food_counter = 0
 
     run = True
     game_speed = 8
@@ -134,9 +157,21 @@ def main():
             head.make_step(-1, 0)
 
         check_screen_border(head, screen_width, screen_height, square_lengths)
-        eat_check(head, food_list, square_lengths, screen_width, screen_height)
+        eat_check(head, food_list, square_lengths, screen_width, screen_height, food_counter)
 
-        redraw(head, snake_body_list, food_list, window)
+        # set the last position from the square in front of it
+        if head.body_squares:
+            for i in range(0, len(head.body_squares)-1):
+                head.body_squares[i+1].x = head.body_squares[i].last_position['x']
+                head.body_squares[i+1].y = head.body_squares[i].last_position['y']
+
+        # save the last position from the square in front of it
+        if head.body_squares:
+            head.save_position()
+            for i in range(0, len(head.body_squares)):
+                head.body_squares[i].save_position()
+
+        redraw(head, head.body_squares, food_list, window)
 
 
 if __name__ == '__main__':
