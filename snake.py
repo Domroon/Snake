@@ -1,6 +1,7 @@
 import pygame
 import random
 
+
 class SnakeHead:
     def __init__(self, x, y, square_lengths):
         self.x = x
@@ -47,6 +48,13 @@ def check_screen_border(square, screen_width, screen_height, square_lengths):
         square.x = left_screen_x
 
 
+def eat_check(snakeHead, food_list):
+    for food in food_list:
+        if food.x == snakeHead.x and food.y == snakeHead.y:
+            food_list.pop()
+            print('The snake has eat the food')
+
+
 def main():
     pygame.init()
 
@@ -73,7 +81,7 @@ def main():
     food_list.append(food)
 
     run = True
-    game_speed = 4
+    game_speed = 6
     while run:
         clock.tick(game_speed)
 
@@ -105,6 +113,7 @@ def main():
             snakeHead.make_step(-1, 0)
 
         check_screen_border(snakeHead, screen_width, screen_height, square_lengths)
+        eat_check(snakeHead, food_list)
 
         redraw(snakeHead, snake_body_list, food_list, window)
 
