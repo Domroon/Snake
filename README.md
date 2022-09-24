@@ -6,6 +6,7 @@ You can eat and the snake is getting longer. When the snake bites itself, it's g
 ## Installation / Start
 - Download the python.exe at "Releases" and simply start it on you windows PC
 - If you don't trust the exe or if you not on windows do the following:
+
     python -m venv venv
     ./venv/Scripts/activate
     pip install pygame
